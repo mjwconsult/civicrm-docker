@@ -11,6 +11,7 @@ ARG PHP_VERSION=8.3
 
 ARG IMAGE_PREFIX=civicrm
 
-FROM ${IMAGE_PREFIX}/common-base:php${PHP_VERSION}
+#FROM ${IMAGE_PREFIX}/common-base:php${PHP_VERSION}
+FROM mjw-common-base:latest
 
 # Nothing here for the moment
