@@ -38,6 +38,7 @@ COPY --from=build  --chown=www-data:www-data /var/www/html/civicrm-standalone /v
 # Add our own entrypoint
 
 COPY civicrm-docker-entrypoint /usr/local/bin/
+COPY civicrm-docker-applypatches /usr/local/bin/
 
 # Add an installation script
 
