@@ -2,7 +2,7 @@
 
 set -e
 
-CIVICRM_CORE_PATH="/var/www/html/wp-content/plugins/civicrm/civicrm"
+CIVICRM_CORE_PATH="/var/www/html/core"
 CIVICRM_PATCHES_PATH="/var/www/patches"
 
 cd ${CIVICRM_CORE_PATH} || exit 1
