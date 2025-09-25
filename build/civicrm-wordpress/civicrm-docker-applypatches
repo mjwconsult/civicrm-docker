@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+
+cd "/var/www/html/wp-content/plugins/civicrm/civicrm" || exit 0
+for i in /var/www/html/patches/*.diff; do (echo $i; patch -p1 < $i) | tee -a "/var/www/html/patchlog.log"; done

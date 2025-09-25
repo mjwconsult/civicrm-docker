@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+# TODO: run the installer if we are not installed and CIVICRM_AUTO_INSTALL=1
+# TODO: run the upgrade if required and CIVICRM_AUTO_UPDATE=1
+
+if [ ! -h /var/www/html/wp-content/plugins/civicrm ]; then ln -s /var/www/civicrm-wordpress /var/www/html/wp-content/plugins/civicrm; fi
+civicrm-docker-applypatches
+exec docker-php-entrypoint "$@"
+

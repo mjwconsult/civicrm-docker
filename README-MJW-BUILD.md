@@ -16,9 +16,19 @@ So actually using "mjw" branch here: https://github.com/mjwconsult/civicrm-docke
 ```
 docker build build/common-base -t mjw-common-base
 docker build build/civicrm-base -t mjw-civicrm-base
-docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.3.1-standalone-6.3-std.tar.gz" --build-arg PHP_VERSION=8.3 build/civicrm -t mjw-civicrm-6.3.1-mjw
 ```
 
+For Standalone:
+
+```
+docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.6.3-standalone-6.6-std.tar.gz" --build-arg PHP_VERSION=8.3 build/civicrm -t mjw-civicrm-6.6.3-mjw
+```
+
+For WordPress:
+
+```
+docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.6.3-wordpress-6.6-std.zip" --build-arg PHP_VERSION=8.3 build/civicrm-wordpress -t mjw-civicrm-wordpress-6.6.3-mjw
+```
 
 
 
