@@ -6,8 +6,7 @@ ARG PHP_VERSION=8.3
 
 ARG IMAGE_PREFIX=civicrm
 
-#FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION} AS build
-FROM mjw-civicrm-base:latest AS build
+FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION} AS build
 
 # Specify a CiviCRM version
 
@@ -26,8 +25,7 @@ RUN curl --fail --location ${CIVICRM_DOWNLOAD_URL} --output civicrm-standalone.t
     && tar -xf civicrm-standalone.tar.gz \
     && rm civicrm-standalone.tar.gz
 
-#FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION}
-FROM mjw-civicrm-base:latest
+FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION}
 
 # Use the default production configuration
 
