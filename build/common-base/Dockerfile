@@ -23,7 +23,7 @@ FROM php:${PHP_VERSION}-apache-bookworm
 #
 # libicu is required for the PHP intl extension
 # libzip-dev is required for the PHP zip extension
-# libpng-dev is required for the PHP gd extension
+# libpng-dev, libjpeg-dev, libfreetype-dev, libwebp-dev, libgd-dev are required for the PHP gd extension
 # imagemagick, libmagickwand-dev are required for PHP imagick extension
 # mariadb-client is required for cv cli
 
@@ -32,6 +32,11 @@ RUN set -eux; \
     apt-get install -y --no-install-recommends \
     libicu-dev \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype-dev \
+    libjpeg62-turbo-dev \
+    libwebp-dev \
+    libgd-dev \
     libzip-dev \
     imagemagick \
     libmagickwand-dev \
@@ -46,6 +51,11 @@ RUN set -eux; \
 # Tip: you can check what extensions have been installed with:
 # `php -r 'echo implode("\n",get_loaded_extensions());'`.
 
+# Configure and install gd with freetype,jpeg and webp support
+RUN set -eux && \
+    docker-php-ext-configure gd --enable-gd --prefix=/usr --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) gd
+
 # imagick is required for eg. Mosaico
 RUN set -eux && \
     pecl install imagick && \
@@ -53,7 +63,6 @@ RUN set -eux && \
 
 RUN set -eux && \
     docker-php-ext-install bcmath && \
-    docker-php-ext-install gd && \
     docker-php-ext-install intl && \
     docker-php-ext-install mysqli && \
     docker-php-ext-install zip
@@ -84,3 +93,7 @@ RUN a2enconf civicrm
 COPY php-conf-civicrm.ini ${PHP_INI_DIR}/conf.d/civicrm.ini
 
 RUN chown www-data:www-data /var/www
+
+# Output to CLI so we can see if gd was configured with all extensions etc.
+RUN php -r 'var_dump(gd_info()); echo implode("\n",get_loaded_extensions());'
+
