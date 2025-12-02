@@ -6,7 +6,8 @@ ARG PHP_VERSION=8.3
 
 ARG IMAGE_PREFIX=civicrm
 
-FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION} AS build
+#FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION} AS build
+FROM mjw-civicrm-base:latest AS build
 
 RUN set -eux; \
     apt-get update && \
@@ -32,7 +33,8 @@ RUN curl --fail --location ${CIVICRM_DOWNLOAD_URL} --output civicrm-wordpress.zi
     && unzip -q civicrm-wordpress.zip \
     && rm civicrm-wordpress.zip
 
-FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION}
+#FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION}
+FROM mjw-civicrm-base:latest
 
 # Install less (required by wp-cli)
 RUN set -eux; \

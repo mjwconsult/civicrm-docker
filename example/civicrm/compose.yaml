@@ -10,7 +10,7 @@ services:
       - public:/var/www/html/public
       - ext:/var/www/html/ext
       - private/php.ini:/usr/local/etc/php/php.ini # If you need to customise php settings override php.ini
-      - patches:/var/www/html/patches # If you need to apply patches to CiviCRM core put them here, they will be applied each time container starts
+      - patches:/var/www/patches # If you need to apply patches to CiviCRM core put them here, they will be applied each time container starts
     environment:
       CIVICRM_DB_HOST: db
       CIVICRM_DB_PORT: 3306
