@@ -13,10 +13,10 @@ docker build build/civicrm --build-arg CIVICRM_VERSION=6.3.1 --build-arg PHP_VER
 
 So actually using "mjw" branch here: https://github.com/mjwconsult/civicrm-docker/tree/mjw
 
-We're using standard common-base and civicrm-base but custom wordpress / standalone.
-Don't need these commands:
+To build an updated image:
 
 ```
+docker pull php:8.3-apache-bookworm
 docker build build/common-base -t mjw-common-base
 docker build build/civicrm-base -t mjw-civicrm-base
 ```
