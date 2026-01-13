@@ -4,7 +4,7 @@ set -e
 
 CIVICRM_CORE_PATH="/var/www/html/wp-content/plugins/civicrm/civicrm"
 CIVICRM_CORE_PATCHES_PATH="/var/www/patches"
-CIVICRM_WP_PATH="/var/www/html/wp-content/plugins/civicrm/civicrm"
+CIVICRM_WP_PATH="/var/www/html/wp-content/plugins/civicrm"
 CIVICRM_WP_PATCHES_PATH="/var/www/patches/wp"
 
 FLAG_APPLIED="/var/www/html/wp-content/plugins/civicrm/mjw-applied"
@@ -23,7 +23,7 @@ echo 'Patching CiviCRM WordPress' >> "${PATCHLOG}"
 cd ${CIVICRM_WP_PATH} || exit 1
 for patchfile in "${CIVICRM_WP_PATCHES_PATH}"/*.diff; do (echo "$patchfile"; patch -p1 < "$patchfile") | tee -a "${PATCHLOG}"; done
 
-echo 'Patchin CiviCRM Core' >> "${PATCHLOG}"
+echo 'Patching CiviCRM Core' >> "${PATCHLOG}"
 cd ${CIVICRM_CORE_PATH} || exit 1
 for patchfile in "${CIVICRM_CORE_PATCHES_PATH}"/*.diff; do (echo "$patchfile"; patch -p1 < "$patchfile") | tee -a "${PATCHLOG}"; done
 
