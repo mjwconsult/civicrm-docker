@@ -3,8 +3,22 @@
 set -e
 
 CIVICRM_CORE_PATH="/var/www/html/core"
-CIVICRM_PATCHES_PATH="/var/www/patches"
+CIVICRM_CORE_PATCHES_PATH="/var/www/patches"
 
+FLAG_APPLIED="/var/www/html/core/mjw-applied"
+
+PATCHLOG="${CIVICRM_CORE_PATCHES_PATH}/patchlog.log"
+
+echo `date` > "${PATCHLOG}"
+# If we didn't do a docker-compose down (eg. on a server restart)
+#  then patches are already applied so do nothing
+if [ -f "${FLAG_APPLIED}" ]; then
+  echo 'Patches already applied' >> "${PATCHLOG}"
+  exit 0;
+fi
+
+echo 'Patching CiviCRM Core' >> "${PATCHLOG}"
 cd ${CIVICRM_CORE_PATH} || exit 1
-echo `date` > "${CIVICRM_PATCHES_PATH}/patchlog.log"
-for i in ${CIVICRM_PATCHES_PATH}/*.diff; do (echo $i; patch -p1 < $i) | tee -a "${CIVICRM_PATCHES_PATH}/patchlog.log"; done
+for patchfile in "${CIVICRM_CORE_PATCHES_PATH}"/*.diff; do (echo "$patchfile"; patch -p1 < "$patchfile") | tee -a "${CIVICRM_CORE_PATCHES_PATH}/patchlog.log"; done
+
+touch "${FLAG_APPLIED}"
