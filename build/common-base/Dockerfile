@@ -73,6 +73,14 @@ RUN set -eux && \
 RUN curl -LsS https://download.civicrm.org/cv/cv.phar -o /usr/local/bin/cv \
     && chmod +x /usr/local/bin/cv
 
+# Download civix (https://github.com/totten/civix)
+RUN curl -LsS https://download.civicrm.org/civix/civix.phar -o /usr/local/bin/civix \
+    && chmod +x /usr/local/bin/civix
+
+# Download composer (https://getcomposer.org/download/)
+RUN curl -LsS https://getcomposer.org/download/latest-stable/composer.phar -o /usr/local/bin/composer \
+    && chmod +x /usr/local/bin/composer
+
 # Enable apache rewrite module
 
 RUN a2enmod rewrite remoteip
