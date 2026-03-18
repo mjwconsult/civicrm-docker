@@ -50,9 +50,17 @@ RUN curl -LsS https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-c
  -o /usr/local/bin/wp \
     && chmod +x /usr/local/bin/wp
 
-# Use the default production configuration
+# Use the default production PHP configuration
 
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php-cli.ini"
+
+# Set PHP memory limit
+
+RUN echo 'memory_limit = ${PHP_MEMORY_LIMIT:-"256M"}\n'  >> $PHP_INI_DIR/php.ini
+
+RUN echo 'memory_limit = -1\n' >> $PHP_INI_DIR/php-cli.ini
 
 # Copy the downloaded tarball to /var/www/html as the www-data user
 
