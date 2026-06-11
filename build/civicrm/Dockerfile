@@ -7,7 +7,7 @@ ARG PHP_VERSION
 ARG IMAGE_PREFIX=civicrm
 
 #FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION} AS build
-FROM mjw-civicrm-base:latest AS build
+FROM dockerhub.mjw.pt/mjw-civicrm-base:latest AS build
 
 # Specify a CiviCRM version
 

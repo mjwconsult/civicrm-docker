@@ -12,6 +12,6 @@ ARG PHP_VERSION
 ARG IMAGE_PREFIX=civicrm
 
 #FROM ${IMAGE_PREFIX}/common-base:php${PHP_VERSION}
-FROM mjw-common-base:latest
+FROM dockerhub.mjw.pt/mjw-common-base:latest
 
 # Nothing here for the moment

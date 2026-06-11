@@ -13,20 +13,24 @@ To build an updated image:
 
 ```
 docker pull php:8.3-apache-bookworm
-docker build build/common-base -t mjw-common-base
-docker build build/civicrm-base -t mjw-civicrm-base
+docker build build/common-base -t localhost:5000/mjw-common-base
+docker push localhost:5000/mjw-common-base
+docker build build/civicrm-base -t localhost:5000/mjw-civicrm-base
+docker push localhost:5000/mjw-civicrm-base
 ```
 
 For Standalone:
 
 ```
-docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-standalone.tar.gz" --build-arg PHP_VERSION=8.3 build/civicrm -t mjw-civicrm-6.15.1
+docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-standalone.tar.gz" --build-arg PHP_VERSION=8.3 build/civicrm -t localhost:5000/mjw-civicrm-6.15.1
+docker push localhost:5000/mjw-civicrm-6.15.1
 ```
 
 For WordPress:
 
 ```
-docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-wordpress.zip" --build-arg PHP_VERSION=8.3 build/civicrm-wordpress -t mjw-civicrm-wordpress-6.15.1
+docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-wordpress.zip" --build-arg PHP_VERSION=8.3 build/civicrm-wordpress -t localhost:5000/mjw-civicrm-wordpress-6.15.1
+docker push localhost:5000/mjw-civicrm-wordpress-6.15.1
 ```
 
 
