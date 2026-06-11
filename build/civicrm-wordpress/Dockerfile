@@ -37,10 +37,12 @@ RUN curl --fail --location ${CIVICRM_DOWNLOAD_URL} --output civicrm-wordpress.zi
 FROM mjw-civicrm-base:latest
 
 # Install less (required by wp-cli)
+# Uncomment to enable unoconv required for civioffice (but brings in a LOT of packages)
 RUN set -eux; \
     apt-get update && \
     apt-get install -y --no-install-recommends \
     less \
+#    unoconv  \
     && \
     rm -rf /var/lib/apt/lists/*
 

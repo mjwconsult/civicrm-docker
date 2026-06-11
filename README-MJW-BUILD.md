@@ -20,13 +20,13 @@ docker build build/civicrm-base -t mjw-civicrm-base
 For Standalone:
 
 ```
-docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.12.0-standalone.tar.gz" --build-arg PHP_VERSION=8.3 build/civicrm -t mjw-civicrm-6.12.0
+docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-standalone.tar.gz" --build-arg PHP_VERSION=8.3 build/civicrm -t mjw-civicrm-6.15.1
 ```
 
 For WordPress:
 
 ```
-docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.12.0-wordpress.zip" --build-arg PHP_VERSION=8.3 build/civicrm-wordpress -t mjw-civicrm-wordpress-6.12.0
+docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-wordpress.zip" --build-arg PHP_VERSION=8.3 build/civicrm-wordpress -t mjw-civicrm-wordpress-6.15.1
 ```
 
 
