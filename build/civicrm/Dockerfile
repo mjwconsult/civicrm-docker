@@ -27,7 +27,7 @@ RUN curl --fail --location ${CIVICRM_DOWNLOAD_URL} --output civicrm-standalone.t
     && rm civicrm-standalone.tar.gz
 
 #FROM ${IMAGE_PREFIX}/civicrm-base:php${PHP_VERSION}
-FROM mjw-civicrm-base:latest
+FROM dockerhub.mjw.pt/mjw-civicrm-base:latest
 
 # Use the default production PHP configuration
 
