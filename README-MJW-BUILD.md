@@ -33,5 +33,13 @@ docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-
 docker push localhost:5000/mjw-civicrm-wordpress-6.15.1
 ```
 
+For WordPress (with unoconv): Required for CiviOffice (ShareSoc)
 
+Why not default? Because it brings in a huge stack of packages.
 
+Uncomment `unoconv` in civicrm-wordpress/Dockerfile
+
+```
+docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-wordpress.zip" --build-arg PHP_VERSION=8.3 build/civicrm-wordpress -t localhost:5000/mjw-civicrm-wordpress-6.15.1-unoconv
+docker push localhost:5000/mjw-civicrm-wordpress-6.15.1-unoconv
+```
