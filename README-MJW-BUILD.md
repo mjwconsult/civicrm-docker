@@ -2,7 +2,7 @@
 
 ## "Generic" build:
 
-docker build build/civicrm --build-arg CIVICRM_VERSION=6.12.0 --build-arg PHP_VERSION=8.3 -t mjw-civicrm-6.12.0
+docker build build/civicrm --build-arg CIVICRM_VERSION=6.15.3 --build-arg PHP_VERSION=8.3 -t mjw-civicrm-6.15.3
 
 ## Our build:
 
@@ -22,24 +22,24 @@ docker push localhost:5000/mjw-civicrm-base
 For Standalone:
 
 ```
-docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-standalone.tar.gz" --build-arg PHP_VERSION=8.3 build/civicrm -t localhost:5000/mjw-civicrm-6.15.1
-docker push localhost:5000/mjw-civicrm-6.15.1
+docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.3-standalone.tar.gz" --build-arg PHP_VERSION=8.3 build/civicrm -t localhost:5000/mjw-civicrm-6.15.3
+docker push localhost:5000/mjw-civicrm-6.15.3
 ```
 
 For WordPress:
 
 ```
-docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-wordpress.zip" --build-arg PHP_VERSION=8.3 build/civicrm-wordpress -t localhost:5000/mjw-civicrm-wordpress-6.15.1
-docker push localhost:5000/mjw-civicrm-wordpress-6.15.1
+docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.3-wordpress.zip" --build-arg PHP_VERSION=8.3 build/civicrm-wordpress -t localhost:5000/mjw-civicrm-wordpress-6.15.3
+docker push localhost:5000/mjw-civicrm-wordpress-6.15.3
 ```
 
 For WordPress (with unoconv): Required for CiviOffice (ShareSoc)
 
-Why not default? Because it brings in a huge stack of packages.
+We build another image on top of mjw-civicrm-wordpress - mjw-civicrm-wordpress-unoconv
 
-Uncomment `unoconv` in civicrm-wordpress/Dockerfile
+which pulls in the unoconv package (and a big stack of packages to support that).
 
 ```
-docker build --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.15.1-wordpress.zip" --build-arg PHP_VERSION=8.3 build/civicrm-wordpress -t localhost:5000/mjw-civicrm-wordpress-6.15.1-unoconv
-docker push localhost:5000/mjw-civicrm-wordpress-6.15.1-unoconv
+docker build --build-arg CIVICRM_VERSION=6.15.3 --build-arg PHP_VERSION=8.3 build/civicrm-wordpress-unoconv -t localhost:5000/mjw-civicrm-wordpress-unoconv-6.15.3
+docker push localhost:5000/mjw-civicrm-wordpress-unoconv-6.15.3
 ```
