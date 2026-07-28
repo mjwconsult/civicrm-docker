@@ -8,14 +8,6 @@ If you are looking for a **ready to use** WordPress + CiviCRM application, use `
 
 **Note**: These instructions are for testing purposes, not production deployment.
 
-### Running the image
-
-```shell
-docker run --detach --publish 8000:80 civicrm/wordpress
-```
-
-You must complete the installation process (see below) before WordPress and CiviCRM are usable.
-
 ### With docker compose
 
 A complete example is in the [`example/wordpress`](example/wordpress) directory.
