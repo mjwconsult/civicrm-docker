@@ -142,6 +142,20 @@ $c['app']->main('[--dry-run] [--step] [--image-prefix=] [--image-filter=] [--php
         'PHP_VERSION',
         'CIVICRM_VERSION'
       ]
+    ],
+    [
+      'dir' => 'civicrm-wordpress',
+      'download' => 'wordpress.zip',
+      'args' => [
+        'PHP_VERSION',
+        'IMAGE_PREFIX',
+        'CIVICRM_VERSION',
+        'CIVICRM_DOWNLOAD_URL',
+      ],
+      'tags' => [
+        'PHP_VERSION',
+        'CIVICRM_VERSION'
+      ]
     ]
   ];
 
