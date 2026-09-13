@@ -163,6 +163,18 @@ $c['app']->main('[--dry-run] [--step] [--image-prefix=] [--image-filter=] [--php
         'CIVICRM_VERSION',
       ],
     ],
+    [
+      'dir' => 'civicrm-wordpress-unoconv',
+      'args' => [
+        'PHP_VERSION',
+        'IMAGE_PREFIX',
+        'CIVICRM_VERSION',
+      ],
+      'tags' => [
+        'PHP_VERSION',
+        'CIVICRM_VERSION',
+      ],
+    ],
   ];
 
   if ($imageFilter) {
