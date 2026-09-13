@@ -29,7 +29,7 @@ FROM ${IMAGE_PREFIX}/wordpress-base:php${PHP_VERSION}
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php-cli.ini" \
     && echo 'memory_limit = ${PHP_MEMORY_LIMIT:-"256M"}\n'  >> $PHP_INI_DIR/php.ini \
-    && echo 'memory_limit = -1\n' >> $PHP_INI_DIR/php-cli.ini
+    && echo 'memory_limit = ${PHP_CLI_MEMORY_LIMIT:-"-1"}\n' >> $PHP_INI_DIR/php-cli.ini
 
 # Copy the downloaded tarball to /var/www/html as the www-data user
 

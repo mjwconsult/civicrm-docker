@@ -5,6 +5,10 @@ set -e
 # TODO: run the installer if we are not installed and CIVICRM_AUTO_INSTALL=1
 # TODO: run the upgrade if required and CIVICRM_AUTO_UPDATE=1
 
+# Refuse to start on a malformed worker count rather than silently serving one
+# request at a time.
+apache-check-mpm-config
+
 if [ ! -h /var/www/html/wp-content/plugins/civicrm ]; then ln -s /var/www/civicrm-wordpress /var/www/html/wp-content/plugins/civicrm; fi
 
 # Workaround for https://github.com/civicrm/civicrm-docker/issues/43
