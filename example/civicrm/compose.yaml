@@ -9,6 +9,7 @@ services:
       - private:/var/www/html/private
       - public:/var/www/html/public
       - ext:/var/www/html/ext
+      - private/php.ini:/usr/local/etc/php/php.ini # If you need to customise php settings override php.ini
       # - ./patches:/var/www/patches:ro # Local CiviCRM core patches. Keep read-only.
     environment:
       CIVICRM_DB_HOST: db
