@@ -26,6 +26,7 @@ FROM php:${IMAGE_TAG}
 # libzip-dev is required for the PHP zip extension
 # imagemagick, libmagickwand-dev are required for PHP imagick extension
 # mariadb-client is required for cv cli
+# patch is required for civicrm-docker-applypatches
 
 RUN set -eux; \
     apt-get update && \
@@ -39,6 +40,7 @@ RUN set -eux; \
     imagemagick \
     libmagickwand-dev \
     mariadb-client \
+    patch \
     && \
     rm -rf /var/lib/apt/lists/*
 
@@ -123,6 +125,10 @@ COPY php-conf-civicrm.ini ${PHP_INI_DIR}/conf.d/civicrm.ini
 # Add functions shared by the civicrm-docker-install scripts
 
 COPY install-functions.php /usr/local/lib/civicrm-docker/
+
+# Add a script that applies local CiviCRM core patches at container start
+
+COPY civicrm-docker-applypatches /usr/local/bin/
 
 RUN chown www-data:www-data /var/www
 
