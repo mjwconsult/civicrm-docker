@@ -57,7 +57,7 @@ docker build \
 docker push localhost:5000/mjw-civicrm-wordpress-6.17.3
 ```
 
-For WordPress (with unoconv): Required for CiviOffice (ShareSoc)
+For WordPress (with unoconv): Required for CiviOffice
 
 We build another image on top of mjw-civicrm-wordpress - mjw-civicrm-wordpress-unoconv
 
