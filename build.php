@@ -194,7 +194,7 @@ $c['app']->main('[--dry-run] [--step] [--image-prefix=] [--image-filter=] [--php
       $args['CIVICRM_DOWNLOAD_URL'] = getDownloadUrl($image, $downloadUrl, $downloadPrefix, $buildCivicrmVersion);
       $parts = array_intersect_key(['CIVICRM_VERSION' => $buildCivicrmVersion, 'PHP_VERSION' => 'php' . $phpVersion], array_flip($image['tags']));
       $buildArgs = getBuildArgs($args, $image);
-      $tagFlags = getTagFlags("{$imagePrefix}/{$image['dir']}", $parts, $defaults, empty($civicrmVersion));
+      $tagFlags = getTagFlags("{$imagePrefix}/{$image['dir']}", $parts, $defaults, $buildCivicrmVersion === $latestCivicrmVersion);
 
       $taskr->passthru('docker build ' . __DIR__ . '/' . 'build/{{0}} {{1|@}} {{2|@}} {{3|@}}', [
         $image['dir'],
@@ -250,15 +250,19 @@ function getTagFlags($name, $parts, $defaults, $isLatest) {
     }
   }
 
-  // Add CiviCRM version aliases if we are building the latest version of CiviCRM
-  if (($isLatest) && isset($parts['CIVICRM_VERSION'])) {
+  // Add CiviCRM version aliases. The bare major alias tracks latest stable, so
+  // an older release must not claim it. The minor alias is series-specific and
+  // always safe.
+  if (isset($parts['CIVICRM_VERSION'])) {
     $versionParts = explode('.', $parts['CIVICRM_VERSION']);
     $major = $versionParts[0];
     $minor = "$versionParts[0].$versionParts[1]";
 
     foreach ($tags as $tag) {
       if (!empty($tag['CIVICRM_VERSION'])) {
-        $tags[] = ['CIVICRM_VERSION' => $major] + $tag;
+        if ($isLatest) {
+          $tags[] = ['CIVICRM_VERSION' => $major] + $tag;
+        }
         $tags[] = ['CIVICRM_VERSION' => $minor] + $tag;
       }
     }
