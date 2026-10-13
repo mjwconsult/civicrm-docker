@@ -28,8 +28,8 @@ Note the image names differ from `buildandpublish.sh`: the version is in the tag
 To build an updated image by hand:
 
 ```
-docker pull php:8.3-apache-bookworm
-docker build build/common-base -t localhost:5000/common-base
+docker pull php:8.3-apache-trixie
+docker build build/common-base --build-arg IMAGE_TAG=8.3-apache-trixie -t localhost:5000/common-base
 docker push localhost:5000/common-base
 docker build build/civicrm-base -t localhost:5000/civicrm-base
 docker push localhost:5000/civicrm-base
