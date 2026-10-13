@@ -10,6 +10,7 @@ if [ ! -h /var/www/html/wp-content/plugins/civicrm ]; then ln -s /var/www/civicr
 # Workaround for https://github.com/civicrm/civicrm-docker/issues/43
 if [ ! -d /var/www/.cv ]; then mkdir /var/www/.cv; chown www-data:www-data /var/www/.cv; fi
 
-civicrm-docker-applypatches
+su www-data -s /bin/sh -c 'civicrm-docker-applypatches /var/www/html/wp-content/plugins/civicrm/civicrm /var/www/html/wp-content/uploads/civicrm/ConfigAndLog wp=/var/www/html/wp-content/plugins/civicrm'
+
 exec docker-php-entrypoint "$@"
 
