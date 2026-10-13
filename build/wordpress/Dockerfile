@@ -53,8 +53,3 @@ RUN mkdir /var/www/private && chown www-data:www-data /var/www/private
 COPY civicrm-docker-install /usr/local/bin/
 
 ENV WORDPRESS_CONFIG_FILE=/var/www/private/wp-config.php
-
-# Report healthy while Apache and PHP serve the login page
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
-  CMD curl -fsS -o /dev/null http://localhost:${APACHE_PORT}/wp-login.php || exit 1
