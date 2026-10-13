@@ -31,8 +31,3 @@ COPY --from=build  --chown=www-data:www-data /var/www/html/civicrm-standalone /v
 # Add an installation script
 
 COPY civicrm-docker-install /usr/local/bin/
-
-# Report healthy while Apache and PHP serve the login page
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
-  CMD curl -fsS -o /dev/null http://localhost:${APACHE_PORT}/civicrm/login || exit 1
