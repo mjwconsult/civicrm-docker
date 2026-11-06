@@ -164,6 +164,16 @@ $c['app']->main('[--dry-run] [--step] [--image-prefix=] [--image-filter=] [--php
       ],
     ],
     [
+      'dir' => 'drupal-base',
+      'args' => [
+        'PHP_VERSION',
+        'IMAGE_PREFIX',
+      ],
+      'tags' => [
+        'PHP_VERSION',
+      ],
+    ],
+    [
       'dir' => 'civicrm-wordpress-unoconv',
       'args' => [
         'PHP_VERSION',

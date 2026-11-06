@@ -23,6 +23,16 @@ Each image gets its own archive flavour, eg. `https://res.mjw.pt/dl/mjwcivicrm-6
 
 Note the image names differ from `buildandpublish.sh`: the version is in the tag rather than the name, so `localhost:5000/mjw-civicrm-6.17.3` becomes `dockerhub.mjw.pt/civicrm:6.17.3-php8.3`, with `:6.17-php8.3` tracking the series. Compose files referencing the old names need updating.
 
+## Drupal
+
+`drupal-base` has no CiviCRM in it (Drupal sites bring their own composer project, see [DRUPAL.md](DRUPAL.md)), so it is tagged by PHP version only and doesn't need `--civicrm-version` or `--download-prefix`. To build just it and its base:
+
+```
+./build.php --image-filter=common-base,drupal-base \
+  --image-prefix=dockerhub.mjw.pt \
+  --php-version=8.3
+```
+
 ## amd64 and arm64
 
 To build both architectures, so the same tags run on x86 and Graviton hosts, add `--platform=linux/amd64,linux/arm64`. Each tag becomes a manifest list and every host pulls its own architecture.

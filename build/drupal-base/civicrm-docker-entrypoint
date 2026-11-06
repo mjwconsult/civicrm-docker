@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+# Workaround for https://github.com/civicrm/civicrm-docker/issues/43
+if [ ! -d /var/www/.cv ]; then mkdir /var/www/.cv; chown www-data:www-data /var/www/.cv; fi
+
+# The site's composer project is mounted at /var/www/html, so core is only there
+# once composer has installed it.
+CIVICRM_CORE_DIR=/var/www/html/vendor/civicrm/civicrm-core
+CIVICRM_DRUPAL_MODULE_DIR="${CIVICRM_DRUPAL_MODULE_DIR:-/var/www/html/web/modules/contrib/civicrm}"
+if [ -d "$CIVICRM_CORE_DIR" ]; then
+  su www-data -s /bin/sh -c "civicrm-docker-applypatches $CIVICRM_CORE_DIR /var/www/html/web/sites/default/files/civicrm/ConfigAndLog drupal=$CIVICRM_DRUPAL_MODULE_DIR"
+else
+  echo "WARNING: $CIVICRM_CORE_DIR not found (run composer install), not applying patches" >&2
+fi
+
+exec docker-php-entrypoint "$@"
