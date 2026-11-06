@@ -64,6 +64,14 @@ The following are optional:
 
 Each Apache prefork worker holds its own PHP interpreter, so `APACHE_MAX_REQUEST_WORKERS` multiplied by `PHP_MEMORY_LIMIT` is the worst case memory the container can demand. Size those two together against the container's memory limit; the defaults suit a host with no such limit.
 
+The following are optional:
+
+- `PHP_MEMORY_LIMIT` - PHP memory limit for web requests (default: `256M`)
+- `PHP_CLI_MEMORY_LIMIT` - PHP memory limit for the CLI, used by cv/wp-cli/drush and cron (default: `-1`, unlimited)
+- `APACHE_MAX_REQUEST_WORKERS` - Apache `MaxRequestWorkers`, and `ServerLimit` with it (default: `150`)
+
+Each Apache prefork worker holds its own PHP interpreter, so `APACHE_MAX_REQUEST_WORKERS` multiplied by `PHP_MEMORY_LIMIT` is the worst case memory the container can demand. Size those two together against the container's memory limit; the defaults suit a host with no such limit.
+
 **Experimental**: you can override the default apache port (in the container) by setting `APACHE_PORT`.
 
 ## Installation
