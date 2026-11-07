@@ -1,0 +1,7 @@
+# BuildKit config for the mjw-multi builder (see README-MJW-BUILD.md).
+#
+# Build steps resolve names through the AWS VPC resolver. The hosts' resolv.conf
+# lists only systemd-resolved's 127.0.0.53, which BuildKit replaces with Google
+# DNS, and the security groups don't allow outbound DNS.
+[dns]
+  nameservers = ["172.31.0.2"]
