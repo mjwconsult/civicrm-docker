@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+# Workaround for https://github.com/civicrm/civicrm-docker/issues/43
+if [ ! -d /var/www/.cv ]; then mkdir /var/www/.cv; chown www-data:www-data /var/www/.cv; fi
+
+# The site's Drupal tree is mounted at /var/www/html. CiviCRM's D7 tarball puts
+# core in the module directory and the Drupal module in its drupal/ subdirectory.
+CIVICRM_CORE_DIR="${CIVICRM_CORE_DIR:-/var/www/html/sites/all/modules/civicrm}"
+if [ -d "$CIVICRM_CORE_DIR/CRM" ]; then
+  su www-data -s /bin/sh -c "civicrm-docker-applypatches $CIVICRM_CORE_DIR /var/www/html/sites/default/files/civicrm/ConfigAndLog drupal=$CIVICRM_CORE_DIR/drupal"
+else
+  echo "WARNING: CiviCRM not found in $CIVICRM_CORE_DIR, not applying patches" >&2
+fi
+
+exec docker-php-entrypoint "$@"

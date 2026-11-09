@@ -25,10 +25,10 @@ Note the image names differ from `buildandpublish.sh`: the version is in the tag
 
 ## Drupal
 
-`drupal-base` has no CiviCRM in it (Drupal sites bring their own composer project, see [DRUPAL.md](DRUPAL.md)), so it is tagged by PHP version only and doesn't need `--civicrm-version` or `--download-prefix`. To build just it and its base:
+`drupal-base` and `drupal7-base` have no CiviCRM in them (Drupal sites bring their own, see [DRUPAL.md](DRUPAL.md)), so they are tagged by PHP version only and don't need `--civicrm-version` or `--download-prefix`. To build just them and their base:
 
 ```
-./build.php --image-filter=common-base,drupal-base \
+./build.php --image-filter=common-base,drupal-base,drupal7-base \
   --image-prefix=dockerhub.mjw.pt \
   --php-version=8.3
 ```

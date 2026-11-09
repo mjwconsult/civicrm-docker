@@ -213,6 +213,8 @@ flowchart BT
     A --> D
     F[drupal-base]
     A --> F
+    G[drupal7-base]
+    A --> G
 ```
 
 ## Management

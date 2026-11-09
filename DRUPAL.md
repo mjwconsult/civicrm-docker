@@ -51,3 +51,31 @@ Patches mounted at `/var/www/patches` are applied to `vendor/civicrm/civicrm-cor
 ## Files
 
 `web/sites/*/files` may serve files but never runs PHP. CiviCRM keeps its logs, uploads, custom field files and compiled templates under `web/sites/default/files/civicrm`; the image refuses to serve `ConfigAndLog`, `upload`, `custom` and `templates_c` from there. Keep Drupal's private files outside `web/`, eg. `$settings['file_private_path'] = '../private';`.
+
+## Drupal 7
+
+`drupal7-base` runs CiviCRM on Drupal 7. Drupal 7 is past its end of life; this image exists to move existing sites, not to start new ones. Like `drupal-base` it holds no Drupal or CiviCRM code: mount the site's Drupal tree, with CiviCRM's Drupal 7 tarball unpacked in `sites/all/modules/civicrm`, at `/var/www/html`, which is also the docroot.
+
+```yaml
+services:
+  app:
+    image: civicrm/drupal7-base:php8.3
+    volumes:
+      - ./drupal:/var/www/html
+      - ./private:/var/www/private      # Drupal's private files, outside the docroot
+      - ./patches:/var/www/patches:ro   # optional
+```
+
+- The tree must be owned by `www-data`, or patches can't be applied (and Drupal can't write `sites/default/files`).
+- The image has drush 8 (the last release for Drupal 7) on the `PATH`, and the working directory is `/var/www/html`, so `drush` and `cv` find the site without options.
+- Patches apply to `sites/all/modules/civicrm`, and those in the `drupal` subdirectory to `sites/all/modules/civicrm/drupal`. Set `CIVICRM_CORE_DIR` if CiviCRM is elsewhere.
+- Drupal 7 only takes HTTPS from `$_SERVER['HTTPS']`. Behind a reverse proxy, set it in `settings.php` from `X-Forwarded-Proto` (when only the proxy can reach the container), or Drupal builds `http://` links.
+- The same `files` rules apply, without the `web/` prefix.
+
+Update CiviCRM by replacing `sites/all/modules/civicrm` with the new Drupal 7 tarball, then:
+
+```shell
+docker compose exec -u www-data app cv upgrade:db
+docker compose exec -u www-data app drush cc all
+docker compose restart app   # re-applies local patches to the new code
+```
