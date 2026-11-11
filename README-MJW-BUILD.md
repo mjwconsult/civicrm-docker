@@ -8,43 +8,28 @@ docker build build/civicrm --build-arg CIVICRM_VERSION=6.15.3 --build-arg PHP_VE
 
 So actually using "mjw" branch here: https://github.com/mjwconsult/civicrm-docker/tree/mjw
 
-MJW images are built from tarballs on `res.mjw.pt` instead of `download.civicrm.org`. `--download-prefix` swaps out that part of the URL, so `build.php` builds the whole set in one go:
+MJW images are built from tarballs on `res.mjw.pt` instead of `download.civicrm.org`, for both amd64 and arm64 so the same tags run on x86 and Graviton hosts. `build.php` builds and pushes the whole set in one go.
 
-```
-./build.php --civicrm-version=6.17.3 \
-  --download-prefix=https://res.mjw.pt/dl/mjw \
-  --image-prefix=dockerhub.mjw.pt \
-  --php-version=8.3
-```
+### One-time builder setup
 
-Each image gets its own archive flavour, eg. `https://res.mjw.pt/dl/mjwcivicrm-6.17.3-standalone.tar.gz` for standalone and `https://res.mjw.pt/dl/mjwcivicrm-6.17.3-wordpress.zip` for WordPress. Add `--dry-run` to see the `docker build` commands without running them, and `--skip-push` to build without publishing. Drop `--civicrm-version` to build the latest stable release. `--php-version` accepts a list, eg. `8.3,8.4`.
-
-`--image-prefix` sets both where each image's `FROM` pulls its base from and where the built image is tagged and pushed, so the whole chain stays on one registry. This replaces the older split where bases went to `localhost:5000` but were pulled from Docker Hub.
-
-Note the image names differ from `buildandpublish.sh`: the version is in the tag rather than the name, so `localhost:5000/mjw-civicrm-6.17.3` becomes `dockerhub.mjw.pt/civicrm:6.17.3-php8.3`, with `:6.17-php8.3` tracking the series. Compose files referencing the old names need updating.
-
-## Drupal
-
-`drupal-base` and `drupal7-base` have no CiviCRM in them (Drupal sites bring their own, see [DRUPAL.md](DRUPAL.md)), so they are tagged by PHP version only and don't need `--civicrm-version` or `--download-prefix`. To build just them and their base:
-
-```
-./build.php --image-filter=common-base,drupal-base,drupal7-base \
-  --image-prefix=dockerhub.mjw.pt \
-  --php-version=8.3
-```
-
-## amd64 and arm64
-
-To build both architectures, so the same tags run on x86 and Graviton hosts, add `--platform=linux/amd64,linux/arm64`. Each tag becomes a manifest list and every host pulls its own architecture.
-
-The default `docker` builder can't produce multi-platform images, so create a `docker-container` builder once and pass it with `--builder`:
+The default `docker` builder can't produce multi-platform images, so create a `docker-container` builder once, from the repository root:
 
 ```
 docker buildx create --name mjw-multi --driver docker-container --driver-opt network=host \
   --buildkitd-config buildkitd.toml --bootstrap
 docker run --privileged --rm tonistiigi/binfmt --install all
+```
 
-./build.php --civicrm-version=6.17.3 \
+- `tonistiigi/binfmt` registers QEMU so the host can build the other architecture. Compiling the PECL extensions under emulation is slow; a native node added with `docker buildx create --append --name mjw-multi <endpoint>` avoids it.
+- `network=host` gives the builder the host's `/etc/hosts`. On d1 that carries the loopback pin for `dockerhub.mjw.pt`; without it pushes go out and back in through Traefik, and the request rate gets d1 banned by CrowdSec.
+- `buildkitd.toml` points build steps at the AWS VPC resolver (the VPC's base address + 2: 172.31.0.2 in the default VPC). The host's `/etc/resolv.conf` lists only systemd-resolved's 127.0.0.53, which BuildKit replaces with Google DNS, and the hosts' security groups don't allow outbound DNS. The builder reads it once, when it is created, so after changing the file `docker buildx rm mjw-multi` and create it again.
+
+### Building
+
+Always give the CiviCRM version and both platforms:
+
+```
+./build.php --civicrm-version=6.19.5 \
   --download-prefix=https://res.mjw.pt/dl/mjw \
   --image-prefix=dockerhub.mjw.pt \
   --php-version=8.3 \
@@ -52,10 +37,26 @@ docker run --privileged --rm tonistiigi/binfmt --install all
   --platform=linux/amd64,linux/arm64
 ```
 
-- `tonistiigi/binfmt` registers QEMU so the host can build the other architecture. Compiling the PECL extensions under emulation is slow; a native node added with `docker buildx create --append --name mjw-multi <endpoint>` avoids it.
-- `network=host` gives the builder the host's `/etc/hosts`. On d1 that carries the loopback pin for `dockerhub.mjw.pt`; without it pushes go out and back in through Traefik, and the request rate gets d1 banned by CrowdSec.
-- `buildkitd.toml` points build steps at the AWS VPC resolver (the VPC's base address + 2: 172.31.0.2 in the default VPC). The host's `/etc/resolv.conf` lists only systemd-resolved's 127.0.0.53, which BuildKit replaces with Google DNS, and the hosts' security groups don't allow outbound DNS. The builder reads it once, when it is created, so run `docker buildx create` from the repository root, and after changing the file `docker buildx rm mjw-multi` and create it again.
-- Don't combine this with `--skip-push`. A `docker-container` builder doesn't load images into the local Docker image store, and each image's `FROM` pulls its parent from `--image-prefix`, so the chain only works when every image is pushed as it is built.
+- Each image gets its own archive flavour, eg. `https://res.mjw.pt/dl/mjwcivicrm-6.19.5-standalone.tar.gz` for standalone and `https://res.mjw.pt/dl/mjwcivicrm-6.19.5-wordpress.zip` for WordPress. Without `--civicrm-version`, `build.php` builds whatever latest.civicrm.org reports as stable, which may not have an MJW tarball yet.
+- Each tag becomes a manifest list and every host pulls its own architecture.
+- `--php-version` accepts a list, eg. `8.3,8.4`. Add `--dry-run` to see the `docker build` commands without running them, and `--image-filter=<dir>,<dir>` to build only some images (the `build/` directory names).
+- Don't add `--skip-push`. A `docker-container` builder doesn't load images into the local Docker image store, and each image's `FROM` pulls its parent from `--image-prefix`, so the chain only works when every image is pushed as it is built.
+- `--image-prefix` sets both where each image's `FROM` pulls its base from and where the built image is tagged and pushed, so the whole chain stays on one registry. This replaces the older split where bases went to `localhost:5000` but were pulled from Docker Hub.
+
+Note the image names differ from `buildandpublish.sh`: the version is in the tag rather than the name, so `localhost:5000/mjw-civicrm-6.19.5` becomes `dockerhub.mjw.pt/civicrm:6.19.5-php8.3`, with `:6.19-php8.3` tracking the series. Compose files referencing the old names need updating.
+
+### Drupal
+
+`drupal-base` and `drupal7-base` have no CiviCRM in them (Drupal sites bring their own, see [DRUPAL.md](DRUPAL.md)), so they are tagged by PHP version only. The full build above includes them; to build just them and their base:
+
+```
+./build.php --civicrm-version=6.19.5 \
+  --image-filter=common-base,drupal-base,drupal7-base \
+  --image-prefix=dockerhub.mjw.pt \
+  --php-version=8.3 \
+  --builder=mjw-multi \
+  --platform=linux/amd64,linux/arm64
+```
 
 ## Manual builds
 
