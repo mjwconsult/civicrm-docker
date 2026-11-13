@@ -27,9 +27,13 @@ FROM php:${IMAGE_TAG}
 # imagemagick, libmagickwand-dev are required for PHP imagick extension
 # mariadb-client is required for cv cli
 # patch is required for civicrm-docker-applypatches
+#
+# apt-get upgrade applies Debian security fixes that the php base image
+# doesn't have yet.
 
 RUN set -eux; \
     apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -o Dpkg::Options::=--force-confold && \
     apt-get install -y --no-install-recommends \
     libfreetype-dev \
     libicu-dev \
