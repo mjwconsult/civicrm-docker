@@ -2,7 +2,7 @@
 
 ## "Generic" build:
 
-docker build build/civicrm --build-arg CIVICRM_VERSION=6.15.3 --build-arg PHP_VERSION=8.3 -t mjw-civicrm-6.15.3
+docker build build/civicrm --build-arg CIVICRM_VERSION=6.20.0 --build-arg PHP_VERSION=8.4 -t mjw-civicrm-6.20.0
 
 ## Our build:
 
@@ -26,32 +26,34 @@ docker run --privileged --rm tonistiigi/binfmt --install all
 
 ### Building
 
-Always give the CiviCRM version and both platforms:
+Always give the CiviCRM version and both platforms. Everything except Drupal 7 is built on PHP 8.4, including `drupal-base`; build `drupal7-base` separately (see [Drupal 7](#drupal-7)):
 
 ```
-./build.php --civicrm-version=6.19.5 \
+./build.php --civicrm-version=6.20.0 \
   --download-prefix=https://res.mjw.pt/dl/mjw \
   --image-prefix=dockerhub.mjw.pt \
-  --php-version=8.3 \
+  --image-filter=common-base,civicrm-base,civicrm,wordpress-base,wordpress,civicrm-wordpress,civicrm-wordpress-unoconv,drupal-base \
+  --php-version=8.4 \
   --builder=mjw-multi \
   --platform=linux/amd64,linux/arm64
 ```
 
-- Each image gets its own archive flavour, eg. `https://res.mjw.pt/dl/mjwcivicrm-6.19.5-standalone.tar.gz` for standalone and `https://res.mjw.pt/dl/mjwcivicrm-6.19.5-wordpress.zip` for WordPress. Without `--civicrm-version`, `build.php` builds whatever latest.civicrm.org reports as stable, which may not have an MJW tarball yet.
+- `--image-filter` lists every image except `drupal7-base`; add any new `build/` directory to it.
+- Each image gets its own archive flavour, eg. `https://res.mjw.pt/dl/mjwcivicrm-6.20.0-standalone.tar.gz` for standalone and `https://res.mjw.pt/dl/mjwcivicrm-6.20.0-wordpress.zip` for WordPress. Without `--civicrm-version`, `build.php` builds whatever latest.civicrm.org reports as stable, which may not have an MJW tarball yet.
 - Each tag becomes a manifest list and every host pulls its own architecture.
 - `--php-version` accepts a list, eg. `8.3,8.4`. Add `--dry-run` to see the `docker build` commands without running them, and `--image-filter=<dir>,<dir>` to build only some images (the `build/` directory names).
 - Don't add `--skip-push`. A `docker-container` builder doesn't load images into the local Docker image store, and each image's `FROM` pulls its parent from `--image-prefix`, so the chain only works when every image is pushed as it is built.
 - `--image-prefix` sets both where each image's `FROM` pulls its base from and where the built image is tagged and pushed, so the whole chain stays on one registry. This replaces the older split where bases went to `localhost:5000` but were pulled from Docker Hub.
 
-Note the image names differ from `buildandpublish.sh`: the version is in the tag rather than the name, so `localhost:5000/mjw-civicrm-6.19.5` becomes `dockerhub.mjw.pt/civicrm:6.19.5-php8.3`, with `:6.19-php8.3` tracking the series. Compose files referencing the old names need updating.
+Note the image names differ from `buildandpublish.sh`: the version is in the tag rather than the name, so `localhost:5000/mjw-civicrm-6.20.0` becomes `dockerhub.mjw.pt/civicrm:6.20.0-php8.4`, with `:6.20-php8.4` tracking the series. Compose files referencing the old names need updating.
 
-### Drupal
+### Drupal 7
 
-`drupal-base` and `drupal7-base` have no CiviCRM in them (Drupal sites bring their own, see [DRUPAL.md](DRUPAL.md)), so they are tagged by PHP version only. The full build above includes them; to build just them and their base:
+`drupal7-base` needs PHP 8.3. Like `drupal-base` it has no CiviCRM in it (Drupal sites bring their own, see [DRUPAL.md](DRUPAL.md)), so it is tagged by PHP version only:
 
 ```
-./build.php --civicrm-version=6.19.5 \
-  --image-filter=common-base,drupal-base,drupal7-base \
+./build.php --civicrm-version=6.20.0 \
+  --image-filter=common-base,drupal7-base \
   --image-prefix=dockerhub.mjw.pt \
   --php-version=8.3 \
   --builder=mjw-multi \
@@ -63,8 +65,8 @@ Note the image names differ from `buildandpublish.sh`: the version is in the tag
 To build an updated image by hand:
 
 ```
-docker pull php:8.3-apache-trixie
-docker build build/common-base --build-arg IMAGE_TAG=8.3-apache-trixie -t localhost:5000/common-base
+docker pull php:8.4-apache-trixie
+docker build build/common-base --build-arg IMAGE_TAG=8.4-apache-trixie -t localhost:5000/common-base
 docker push localhost:5000/common-base
 docker build build/civicrm-base -t localhost:5000/civicrm-base
 docker push localhost:5000/civicrm-base
@@ -75,10 +77,10 @@ For Standalone:
 ```
 docker build \
   --build-arg IMAGE_PREFIX=dockerhub.mjw.pt \
-  --build-arg PHP_VERSION=8.3 \
-  --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.17.3-standalone.tar.gz" \
-  build/civicrm -t localhost:5000/mjw-civicrm-6.17.3
-docker push localhost:5000/mjw-civicrm-6.17.3
+  --build-arg PHP_VERSION=8.4 \
+  --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.20.0-standalone.tar.gz" \
+  build/civicrm -t localhost:5000/mjw-civicrm-6.20.0
+docker push localhost:5000/mjw-civicrm-6.20.0
 ```
 
 For WordPress:
@@ -86,10 +88,10 @@ For WordPress:
 ```
 docker build \
   --build-arg IMAGE_PREFIX=dockerhub.mjw.pt \
-  --build-arg PHP_VERSION=8.3 \
-  --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.17.3-wordpress.zip" \
-  build/civicrm-wordpress -t localhost:5000/mjw-civicrm-wordpress-6.17.3
-docker push localhost:5000/mjw-civicrm-wordpress-6.17.3
+  --build-arg PHP_VERSION=8.4 \
+  --build-arg CIVICRM_DOWNLOAD_URL="https://res.mjw.pt/dl/mjwcivicrm-6.20.0-wordpress.zip" \
+  build/civicrm-wordpress -t localhost:5000/mjw-civicrm-wordpress-6.20.0
+docker push localhost:5000/mjw-civicrm-wordpress-6.20.0
 ```
 
 For WordPress (with unoconv): Required for CiviOffice
@@ -99,6 +101,6 @@ We build another image on top of mjw-civicrm-wordpress - mjw-civicrm-wordpress-u
 which pulls in the unoconv package (and a big stack of packages to support that).
 
 ```
-docker build --build-arg CIVICRM_VERSION=6.15.3 --build-arg PHP_VERSION=8.3 build/civicrm-wordpress-unoconv -t localhost:5000/mjw-civicrm-wordpress-unoconv-6.15.3
-docker push localhost:5000/mjw-civicrm-wordpress-unoconv-6.15.3
+docker build --build-arg CIVICRM_VERSION=6.20.0 --build-arg PHP_VERSION=8.4 build/civicrm-wordpress-unoconv -t localhost:5000/mjw-civicrm-wordpress-unoconv-6.20.0
+docker push localhost:5000/mjw-civicrm-wordpress-unoconv-6.20.0
 ```

@@ -7,7 +7,7 @@ Mount the project at `/var/www/html`; Apache serves `/var/www/html/web`.
 ```yaml
 services:
   app:
-    image: civicrm/drupal-base:php8.3
+    image: civicrm/drupal-base:php8.4
     volumes:
       - ./drupal:/var/www/html
       - ./patches:/var/www/patches:ro   # optional, see below
